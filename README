@@ -1,4 +1,5 @@
 This is a Java binding for the Twitter API written in a way that will allow Java developers to quickly and successfully work with the Twitter API.
+It is in complete working order, but there are some definite issues as it is only one day old.  See the Issues tab for more info
 
 ----------
 
