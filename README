@@ -1,0 +1,37 @@
+This is a Java binding for the Twitter API written in a way that will allow Java developers to quickly and successfully work with the Twitter API.
+
+----------
+
+Example 1:
+
+TwitterStreamConfiguraion tws = new TwitterStreamConfiguration("username", "password");
+MyTwitterHandler handler = new TwitterHandler();
+
+TwitterStream ts = TweetRiver.sample(tws, handler);
+(new Thread(ts)).start();
+
+----------
+
+Example 2:
+
+TwitterStreamConfiguration tws = new TwitterStreamConfiguration("username", "password");
+MyTwitterHandler handler = new TwitterHandler();
+
+Collection<String> tracks = new ArrayList<String>();
+tracks.add("obama");
+TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks);
+(new Thread(ts)).start();
+
+----------
+
+Dependencies:
+JSON-LIB 2.3
+EZMorph 1.0.6
+Commons - BeanUtils
+Commons - Lang
+Commons - Collections
+Commons - Logging
+
+----------
+
+License: BSD
