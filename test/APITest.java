@@ -2,9 +2,10 @@
     John Crepezzi (c) 2009
     <john@crepezzi.com>
 */
-import com.crepezzi.tweetriver.TweetRiver;
-import com.crepezzi.tweetriver.TwitterStream;
-import com.crepezzi.tweetriver.TwitterStreamConfiguration;
+
+import com.crepezzi.tweetstream4j.TweetRiver;
+import com.crepezzi.tweetstream4j.TwitterStream;
+import com.crepezzi.tweetstream4j.TwitterStreamConfiguration;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.Test;

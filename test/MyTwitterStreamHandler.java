@@ -27,10 +27,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-import com.crepezzi.tweetriver.TwitterStreamHandler;
-import com.crepezzi.tweetriver.types.SDeletion;
-import com.crepezzi.tweetriver.types.SLimit;
-import com.crepezzi.tweetriver.types.STweet;
+import com.crepezzi.tweetstream4j.TwitterStreamHandler;
+import com.crepezzi.tweetstream4j.types.SDeletion;
+import com.crepezzi.tweetstream4j.types.SLimit;
+import com.crepezzi.tweetstream4j.types.STweet;
 
 /**
  * Sample implementation of a TwitterStreamHandler.

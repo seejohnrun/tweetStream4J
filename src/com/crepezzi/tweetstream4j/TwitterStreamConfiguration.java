@@ -25,9 +25,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.crepezzi.tweetriver;
+package com.crepezzi.tweetstream4j;
 
-import com.crepezzi.tweetriver.ext.Base64Coder;
+import com.crepezzi.tweetstream4j.ext.Base64Coder;
 
 /**
  * A configuration class for describing to TweetRiver how to set up a TwitterStream.

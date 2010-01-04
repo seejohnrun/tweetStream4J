@@ -36,7 +36,7 @@
 * 2009-09-16: Additional license (BSD) added.<br>
 */
 
-package com.crepezzi.tweetriver.ext;
+package com.crepezzi.tweetstream4j.ext;
 
 public class Base64Coder {
 

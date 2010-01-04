@@ -25,7 +25,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.crepezzi.tweetriver.types;
+package com.crepezzi.tweetstream4j.types;
 
 import net.sf.json.JSONObject;
 

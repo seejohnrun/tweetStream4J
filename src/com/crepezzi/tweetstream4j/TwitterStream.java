@@ -25,11 +25,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.crepezzi.tweetriver;
+package com.crepezzi.tweetstream4j;
 
-import com.crepezzi.tweetriver.types.SDeletion;
-import com.crepezzi.tweetriver.types.SLimit;
-import com.crepezzi.tweetriver.types.STweet;
+import com.crepezzi.tweetstream4j.types.SDeletion;
+import com.crepezzi.tweetstream4j.types.SLimit;
+import com.crepezzi.tweetstream4j.types.STweet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

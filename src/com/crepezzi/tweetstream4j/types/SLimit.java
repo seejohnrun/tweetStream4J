@@ -25,68 +25,64 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.crepezzi.tweetriver.types;
+package com.crepezzi.tweetstream4j.types;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
- * Class representing a twitter geo location for the twitter streaming api
- * @author jcrepezzi
+ * An object representing a limit from twitter
+ * from twitter:
+ *      Track streams may also contain limitation notices, where the integer
+ *      track is an enumeration of statuses that matched the track predicate
+ *      but were administratively limited. These notices will be sent each time
+ *      a limited stream becomes unlimited.
+ * @author based
  */
-public class STweetGeo {
+public class SLimit {
 
-    private String type;
-    private Double latitude, longitude;
+    private Long track;
+
+    private SLimit() {
+        //no creating limits
+    }
 
     /**
-     * Parse a twitter geo location from JSON object
-     * @param obj the JSON object to parse
-     * @return The resultant STweetGeo object.
+     * Create a SLimit object from a JSONObject
+     * @param obj The JSONObject to parse
+     * @return The resultant SLimit
      */
-    static STweetGeo parseJSON(JSONObject obj) {
-        STweetGeo stg = new STweetGeo();
-        stg.type = obj.optString("type");
-
-        //get coordinates
-        JSONArray coords = obj.optJSONArray("coordinates");
-        if (coords == null) return null; //we don't have a proper geo element
-        stg.latitude = coords.getDouble(0);
-        stg.longitude = coords.getDouble(1);
-
-        return stg;
+    public static SLimit parseJSON(JSONObject obj) {
+        SLimit lim = new SLimit();
+        lim.track = obj.getLong("track");
+        return lim;
+    }
+    
+    public Long getTrack() {
+        return this.track;
     }
 
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public String getType() {
-        return type;
+    @Override
+    public String toString() {
+        if (track == null) return null;
+        return track.toString();
     }
 
     /**
-     * Equals depends on latitude and longitude
+     * Equality is based on status id
      */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        final STweetGeo other = (STweetGeo) obj;
-        if (this.latitude != other.latitude && (this.latitude == null || !this.latitude.equals(other.latitude))) return false;
-        if (this.longitude != other.longitude && (this.longitude == null || !this.longitude.equals(other.longitude))) return false;
+        final SLimit other = (SLimit) obj;
+        if (this.track != other.track && (this.track == null || !this.track.equals(other.track))) return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + (this.latitude != null ? this.latitude.hashCode() : 0);
-        hash = 79 * hash + (this.longitude != null ? this.longitude.hashCode() : 0);
+        int hash = 3;
+        hash = 89 * hash + (this.track != null ? this.track.hashCode() : 0);
         return hash;
     }
 
