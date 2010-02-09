@@ -90,4 +90,14 @@ public class STweetGeo {
         return hash;
     }
 
+    /**
+     * A debug string.
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return type + " " + latitude + " " + longitude;
+    }
+    
 }

@@ -133,4 +133,8 @@ public class STweet {
         return user;
     }
 
+    public STweetGeo getGeo() {
+        return geo;
+    }
+
 }

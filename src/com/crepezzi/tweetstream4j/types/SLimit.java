@@ -53,7 +53,7 @@ public class SLimit {
      */
     public static SLimit parseJSON(JSONObject obj) {
         SLimit lim = new SLimit();
-        lim.track = obj.getLong("track");
+        lim.track = obj.getJSONObject("limit").getLong("track");
         return lim;
     }
     
