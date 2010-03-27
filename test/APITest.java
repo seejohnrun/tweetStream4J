@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class APITest {
 
-    private static final TwitterStreamConfiguration tws = new TwitterStreamConfiguration("seejohnrun", "9052023");
+    private static final TwitterStreamConfiguration tws = new TwitterStreamConfiguration("seejohnrun", "");
 
     @Test
     public void testSampleHappyPath() throws Exception {
