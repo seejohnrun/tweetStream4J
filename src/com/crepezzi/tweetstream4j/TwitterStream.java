@@ -76,6 +76,7 @@ public class TwitterStream implements Runnable {
         this.authb64 = authb64;
         try {
             this.url = new URL(urlString);
+            logger.debug("urlString: '" + urlString + "' / postContents: '" + postContents + "'");
         } catch (MalformedURLException ex) {
             logger.error("Logger is potentially flawed or outdated. " + ex.getLocalizedMessage());
         }
@@ -160,6 +161,7 @@ public class TwitterStream implements Runnable {
         String line;
         while((line = br.readLine()) != null) {
             try {
+                if (line.isEmpty()) continue; //skip empty lines
                 parseIncoming(line);
             } catch (JSONException ex) {
                 logger.error("API possibly broken, Twitter possibly broken! " + ex.getMessage());
