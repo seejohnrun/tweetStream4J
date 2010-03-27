@@ -42,6 +42,7 @@ import net.sf.json.JSONObject;
 public class SDeletion {
 
     private Long statusId, userId;
+    private JSONObject json;
     
     private SDeletion() {
         //no creating your own deletions
@@ -55,10 +56,15 @@ public class SDeletion {
     public static SDeletion parseJSON(JSONObject obj) {
         //get the proper object
         SDeletion del = new SDeletion();
+        del.json = obj;
         obj = obj.getJSONObject("delete").getJSONObject("status");
         del.statusId = obj.getLong("id");
         del.userId = obj.getLong("user_id");
         return del;
+    }
+
+    public JSONObject getJSON() {
+        return this.json;
     }
 
     /**

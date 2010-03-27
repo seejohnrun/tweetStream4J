@@ -40,6 +40,7 @@ public class STweet {
     private String text, inReplyToScreenName, source, createdAt;
     private STweetUser user;
     private STweetGeo geo;
+    private JSONObject json;
 
     private STweet() {
         //no creating tweets
@@ -52,6 +53,7 @@ public class STweet {
      */
     public static STweet parseJSON(JSONObject obj) {
         STweet tweet = new STweet();
+        tweet.json = obj;
         tweet.favorited = obj.getBoolean("favorited");
         tweet.truncated = obj.getBoolean("truncated");
         tweet.inReplyToUserId = obj.optLong("in_reply_to_user_id");
@@ -68,6 +70,10 @@ public class STweet {
         if (t != null) tweet.geo = STweetGeo.parseJSON(t);
 
         return tweet;
+    }
+
+    public JSONObject getJSON() {
+        return this.json;
     }
 
     @Override

@@ -41,6 +41,7 @@ public class STweetUser {
     private int followersCount, friendsCount, favouritesCount, statusesCount, utcOffset;
     private String createdAt;
     private Long userId;
+    private JSONObject json;
 
     private STweetUser() {
         //no creating tweet users
@@ -53,6 +54,7 @@ public class STweetUser {
      */
     static STweetUser parseJSON(JSONObject obj) {
         STweetUser user = new STweetUser();
+        user.json = obj;
         user.userId = obj.getLong("id");
         user.screenName = obj.getString("screen_name");
         user.profileBackgroundTile = obj.getBoolean("profile_background_tile");
@@ -79,6 +81,10 @@ public class STweetUser {
         user.createdAt = obj.getString("created_at");
         user.utcOffset = obj.optInt("utc_offset");
         return user;
+    }
+
+    public JSONObject getJSON() {
+        return this.json;
     }
 
     public String getCreatedAt() {

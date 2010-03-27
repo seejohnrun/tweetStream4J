@@ -38,6 +38,7 @@ public class STweetGeo {
 
     private String type;
     private Double latitude, longitude;
+    private JSONObject json;
 
     /**
      * Parse a twitter geo location from JSON object
@@ -46,6 +47,7 @@ public class STweetGeo {
      */
     static STweetGeo parseJSON(JSONObject obj) {
         STweetGeo stg = new STweetGeo();
+        stg.json = obj;
         stg.type = obj.optString("type");
 
         //get coordinates
@@ -55,6 +57,10 @@ public class STweetGeo {
         stg.longitude = coords.getDouble(1);
 
         return stg;
+    }
+
+    public JSONObject getJSON() {
+        return this.json;
     }
 
     public Double getLatitude() {

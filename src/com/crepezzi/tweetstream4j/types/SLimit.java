@@ -41,6 +41,7 @@ import net.sf.json.JSONObject;
 public class SLimit {
 
     private Long track;
+    private JSONObject json;
 
     private SLimit() {
         //no creating limits
@@ -53,8 +54,13 @@ public class SLimit {
      */
     public static SLimit parseJSON(JSONObject obj) {
         SLimit lim = new SLimit();
+        lim.json = obj;
         lim.track = obj.getJSONObject("limit").getLong("track");
         return lim;
+    }
+
+    public JSONObject getJSON() {
+        return this.json;
     }
     
     public Long getTrack() {
