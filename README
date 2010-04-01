@@ -49,6 +49,12 @@ class MyTwitterHandler implements TwitterStreamHandler {
 
 ----------
 
+===Contributors
+
+* Dan Frankowski
+
+----------
+
 Dependencies:
 JSON-LIB 2.3
 EZMorph 1.0.6
