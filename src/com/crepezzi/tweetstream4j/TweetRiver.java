@@ -189,6 +189,8 @@ public final class TweetRiver {
      * @param tracks A collection of Keywords to track :: Collection<String>
      * @return A string representing the given parameters in the proper form.
      *         Note: tracks will be URL encoded for HTTP.
+     * @throws IllegalArgumentException if any of the tracks contain
+     *         spaces.  Reference: http://apiwiki.twitter.com/Streaming-API-Documentation#track
      */
     private static String buildFilterContents(Collection<Long> follows, Collection<String> tracks) {
         StringBuilder body = new StringBuilder();
@@ -208,6 +210,7 @@ public final class TweetRiver {
             body.append("track=");
             boolean first = true;
             for (String s : tracks) {
+                if (s.contains(" ")) throw new IllegalArgumentException("Tracks cannot contain spaces");
                 if (!first) body.append(','); else first = false;
                 try { body.append(URLEncoder.encode(s, "UTF-8")); } catch (UnsupportedEncodingException ex) { logger.error(ex); }
             }
