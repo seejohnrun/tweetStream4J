@@ -141,7 +141,7 @@ public class TwitterStream implements Runnable {
             os.write(this.postContents.getBytes());
         }
         //set up an input stream, UTF-8
-        br = new BufferedReader(new InputStreamReader(this.conn.getInputStream(), "ISO-8859-15"));
+        br = new BufferedReader(new InputStreamReader(this.conn.getInputStream(), "UTF-8"));
     }
 
     /**
