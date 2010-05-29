@@ -122,6 +122,7 @@ public class TwitterStream implements Runnable {
             }
             if (this.stopRequested) break;
         }
+        handler.stop(); // Signal to the handler
     }
 
     /**

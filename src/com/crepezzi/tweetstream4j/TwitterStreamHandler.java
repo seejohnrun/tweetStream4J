@@ -56,4 +56,10 @@ public interface TwitterStreamHandler {
      */
     public void addDeletion(SDeletion d);
 
+
+    /**
+     * Twitter stream handler has been requested to stop.
+     */
+    public void stop();
+    
 }

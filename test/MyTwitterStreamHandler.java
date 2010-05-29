@@ -40,16 +40,19 @@ public class MyTwitterStreamHandler implements TwitterStreamHandler {
 
     private int tweetCount = 0, limitCount = 0, deletionCount = 0;
 
+    @Override
     public void addTweet(STweet t) {
         System.out.println("TWEET! " + t.toString());
         tweetCount++;
     }
 
+    @Override
     public void addLimit(SLimit l) {
         System.out.println("LIMIT! " + l.toString());
         limitCount++;
     }
 
+    @Override
     public void addDeletion(SDeletion d) {
         System.out.println("DELETION! " + d.toString());
         deletionCount++;
@@ -65,6 +68,11 @@ public class MyTwitterStreamHandler implements TwitterStreamHandler {
 
     int getDeletionCount() {
         return this.deletionCount;
+    }
+
+    @Override
+    public void stop() {
+        // do nothing
     }
 
 }
