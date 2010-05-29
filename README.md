@@ -1,11 +1,11 @@
 # TweetStream4J
 
-*This is a Java binding for the Twitter API written in a way that will allow Java developers to quickly and successfully work with the Twitter API.*
+*This is a Java binding for the Twitter API written in a way that will allow Java developers to quickly and successfully work with the Twitter API.*  
 *It is in complete working order, but there are some definite issues as it is only one day old.  See the Issues tab for more info*
 
 ---
 
-## Example 1:
+### Example 1:
 
     TwitterStreamConfiguraion tws = new TwitterStreamConfiguration("username", "password");
     MyTwitterHandler handler = new MyTwitterHandler();
@@ -13,9 +13,7 @@
     TwitterStream ts = TweetRiver.sample(tws, handler);
     (new Thread(ts)).start();
 
----
-
-## Example 2:
+### Example 2:
 
     TwitterStreamConfiguration tws = new TwitterStreamConfiguration("username", "password");
     MyTwitterHandler handler = new MyTwitterHandler();
@@ -25,9 +23,7 @@
     TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks);
     (new Thread(ts)).start();
 
----
-
-== TwitterStreamHandler(s)
+### TwitterStreamHandler(s)
 
 similarly simple:
 
@@ -49,13 +45,13 @@ similarly simple:
 
 ---
 
-== Contributors
+### Contributors
 
 * Dan Frankowski
 
 ----------
 
-== Full Dependency List:
+### Full Dependency List
 
 * JSON-LIB 2.3
 * EZMorph 1.0.6
@@ -66,7 +62,7 @@ similarly simple:
 
 ----------
 
-**License:**
+### License (BSD)
 
 Copyright © 2010 John Crepezzi. All Rights Reserved.
 
