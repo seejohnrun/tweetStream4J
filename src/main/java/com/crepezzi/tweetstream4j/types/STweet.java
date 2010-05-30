@@ -106,7 +106,7 @@ public class STweet {
 
     @Override
     public int hashCode() {
-	    return new HashCodeBuilder(-1944286887, -1020224145).append(statusId).hashCode();
+	    return new HashCodeBuilder(-1944286887, -1020224145).append(statusId).toHashCode();
     }
 
     public String getCreatedAt() {
