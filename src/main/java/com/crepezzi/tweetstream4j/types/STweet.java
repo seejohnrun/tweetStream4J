@@ -4,12 +4,12 @@ All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
+ * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of the <organization> nor the
+ * Neither the name of the <organization> nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -23,14 +23,19 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 package com.crepezzi.tweetstream4j.types;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import net.sf.json.JSONObject;
 
 /**
  * A Class representing a streamed tweet from the Twitter streaming API.
+ * 
  * @author jcrepezzi
  */
 public class STweet {
@@ -42,13 +47,15 @@ public class STweet {
     private STweetGeo geo;
     private JSONObject json;
 
-    private STweet() {
-        //no creating tweets
+    protected STweet() {
+	  // no creating tweets
     }
 
     /**
      * Parse the JSON of an incoming tweet and return an STweet instance
-     * @param obj The JSON object to parse
+     * 
+     * @param obj
+     *            The JSON object to parse
      * @return The resultant STweet
      */
     public static STweet parseJSON(JSONObject obj) {
@@ -65,9 +72,10 @@ public class STweet {
         tweet.createdAt = obj.getString("created_at");
         tweet.user = STweetUser.parseJSON(obj.getJSONObject("user"));
 
-        //get geo
+        // get geo
         JSONObject t = obj.optJSONObject("geo");
-        if (t != null) tweet.geo = STweetGeo.parseJSON(t);
+        if (t != null && !t.isNullObject())
+            tweet.geo = STweetGeo.parseJSON(t);
 
         return tweet;
     }
@@ -78,7 +86,11 @@ public class STweet {
 
     @Override
     public String toString() {
-        return this.text + " (by " + this.user.getScreenName() + ")";
+    	return new ToStringBuilder(null)
+                .append("statusId", statusId)
+                .append("tweet", text)
+                .append("user", user)
+                .toString();
     }
 
     /**
@@ -86,25 +98,23 @@ public class STweet {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        final STweet other = (STweet) obj;
-        if (this.statusId != other.statusId && (this.statusId == null || !this.statusId.equals(other.statusId))) return false;
-        return true;
+  	    if (obj == this) return true;
+	    if (!(obj instanceof STweet)) return false;
+	    STweet rhs = (STweet) obj;
+	    return new EqualsBuilder().append(this.statusId, rhs.statusId).isEquals();
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        return hash;
+	    return new HashCodeBuilder(-1944286887, -1020224145).append(statusId).hashCode();
     }
 
     public String getCreatedAt() {
-        return createdAt;
+	    return createdAt;
     }
 
     public Boolean getFavorited() {
-        return favorited;
+	    return favorited;
     }
 
     public String getInReplyToScreenName() {

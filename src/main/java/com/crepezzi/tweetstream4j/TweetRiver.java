@@ -212,7 +212,11 @@ public final class TweetRiver {
             for (String s : tracks) {
                 if (s.contains(" ")) throw new IllegalArgumentException("Tracks cannot contain spaces");
                 if (!first) body.append(','); else first = false;
-                try { body.append(URLEncoder.encode(s, "UTF-8")); } catch (UnsupportedEncodingException ex) { logger.error(ex); }
+                try { 
+                    body.append(URLEncoder.encode(s, "UTF-8"));
+                } catch (UnsupportedEncodingException ex) {
+                    logger.error(ex.getMessage());
+                }
             }
         }
         //return the body

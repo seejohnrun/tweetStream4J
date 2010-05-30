@@ -102,6 +102,7 @@ public class TwitterStream implements Runnable {
     /**
      * Continue to open connections, linearly falling backwards on failure.
      */
+    @Override
     public void run() {
         while (true) {
             try {

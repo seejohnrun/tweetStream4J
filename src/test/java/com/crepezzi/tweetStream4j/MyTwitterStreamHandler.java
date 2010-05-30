@@ -1,3 +1,5 @@
+package com.crepezzi.tweetStream4j;
+
 /*
 Copyright (c) 2010, John Crepezzi <john@crepezzi.com>
 All rights reserved.
