@@ -34,7 +34,7 @@ import net.sf.json.JSONObject;
  * Class representing a twitter geo location for the twitter streaming api
  * @author jcrepezzi
  */
-public class STweetGeo {
+public final class STweetGeo {
 
     private String type;
     private Double latitude, longitude;

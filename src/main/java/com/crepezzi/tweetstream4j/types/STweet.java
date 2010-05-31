@@ -38,7 +38,7 @@ import net.sf.json.JSONObject;
  * 
  * @author jcrepezzi
  */
-public class STweet {
+public final class STweet {
 
     private Boolean favorited, truncated;
     private Long inReplyToUserId, inReplyToStatusId, statusId;

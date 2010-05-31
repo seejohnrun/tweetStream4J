@@ -39,7 +39,7 @@ import net.sf.json.JSONObject;
  *      be deleted from your backing store.
  * @author jcrepezzi
  */
-public class SDeletion {
+public final class SDeletion {
 
     private Long statusId, userId;
     private JSONObject json;

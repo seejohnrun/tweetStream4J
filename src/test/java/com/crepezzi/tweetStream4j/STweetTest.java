@@ -10,18 +10,15 @@ import org.junit.Test;
  */
 public class STweetTest {
 
-    // Since we can't instantiate STweets
-    class MockTweet extends STweet {
-    }
+    private JSONObject json = makeMockJsonObj();
+    private STweet obj = STweet.parseJSON(json);
 
     @Test
     public void testEquals() throws Exception {
-        final MockTweet obj = new MockTweet();
         assertFalse(obj.equals(null));
         assertFalse(obj.equals(new Object()));
         assertTrue(obj.equals(obj));
 
-        JSONObject json = makeMockJsonObj();
         STweet obj1 = STweet.parseJSON(json);
         STweet obj2 = STweet.parseJSON(json);
         assertTrue(obj1.equals(obj2));
@@ -29,12 +26,12 @@ public class STweetTest {
 
     @Test
     public void testHashCode() {
-        assertNotNull(new MockTweet().hashCode());
+        assertNotNull(obj.hashCode());
     }
 
     @Test
     public void testToString() {
-    	assertNotNull(new MockTweet().toString());
+    	assertNotNull(obj.toString());
     }
 
     /*

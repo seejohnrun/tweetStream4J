@@ -38,7 +38,7 @@ import net.sf.json.JSONObject;
  *      a limited stream becomes unlimited.
  * @author based
  */
-public class SLimit {
+public final class SLimit {
 
     private Long track;
     private JSONObject json;

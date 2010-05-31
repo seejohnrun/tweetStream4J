@@ -33,7 +33,7 @@ import net.sf.json.JSONObject;
  * A class representing a user in the twitterverse.
  * @author jcrepezzi
  */
-public class STweetUser {
+public final class STweetUser {
 
     private Boolean profileBackgroundTile, verified, geoEnabled, notifications, isProtected, following;
     private String url, profileSidebarBorderColor, description, profileBackgroundColor,
