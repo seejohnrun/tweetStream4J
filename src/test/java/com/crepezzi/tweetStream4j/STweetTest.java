@@ -1,8 +1,8 @@
 package com.crepezzi.tweetStream4j;
 
 import com.crepezzi.tweetstream4j.types.STweet;
+import com.google.gson.JsonObject;
 import static org.junit.Assert.*;
-import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -10,7 +10,7 @@ import org.junit.Test;
  */
 public class STweetTest {
 
-    private JSONObject json = makeMockJsonObj();
+    private JsonObject json = makeMockJsonObj();
     private STweet obj = STweet.parseJSON(json);
 
     @Test
@@ -38,7 +38,7 @@ public class STweetTest {
      * JSONObject is very cranky about trying to access non-existent fields so
      * we have to provide all of the non "optional" fields
      */
-    private JSONObject makeMockJsonObj() {
+    private JsonObject makeMockJsonObj() {
         String[] strings = new String[] { "screen_name", "text", "url",
             "in_reply_to_screen_name", "source", "created_at",
             "profile_sidebar_border_color", "description",
@@ -53,20 +53,21 @@ public class STweetTest {
         String[] ints = new String[] {
             "followers_count", "friends_count", "favourites_count", "statuses_count"
         };
-        
-        JSONObject json = new JSONObject();
+
+        JsonObject json_object = new JsonObject();
         for (String field : strings) {
-            json.accumulate(field, "");
+            json_object.addProperty(field, "");
         }
         for (String field : booleans) {
-            json.accumulate(field, false);
+            json_object.addProperty(field, false);
         }
         for (String field : ints) {
-            json.accumulate(field, 0);
+            json_object.addProperty(field, 0);
         }
-        json.accumulate("id", 1234L);
-        json.accumulate("user", json);
-        return json;
+        
+        json_object.addProperty("id", 1234L);
+        json_object.add("user", json_object);
+        return json_object;
     }
 
 }

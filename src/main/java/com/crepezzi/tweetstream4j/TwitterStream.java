@@ -30,6 +30,9 @@ package com.crepezzi.tweetstream4j;
 import com.crepezzi.tweetstream4j.types.SDeletion;
 import com.crepezzi.tweetstream4j.types.SLimit;
 import com.crepezzi.tweetstream4j.types.STweet;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,8 +40,6 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -165,7 +166,7 @@ public class TwitterStream implements Runnable {
             try {
                 if (line.isEmpty()) continue; //skip empty lines
                 parseIncoming(line);
-            } catch (JSONException ex) {
+            } catch (JsonParseException ex) {
                 logger.error("API possibly broken, Twitter possibly broken! " + ex.getMessage());
             }
             if (this.stopRequested) break;
@@ -179,10 +180,11 @@ public class TwitterStream implements Runnable {
     private void parseIncoming(String line) {
         if (line == null) return;
         //parse with JSON
-        JSONObject object = JSONObject.fromObject(line);
-        if (object.has("delete")) parseDeletion(object);
-        else if (object.has("limit")) parseLimit(object);
-        else if (object.has("text")) parseTweet(object);
+        JsonParser parser = new JsonParser();
+        JsonObject elem = parser.parse(line).getAsJsonObject();
+        if (elem.has("delete")) parseDeletion(elem);
+        else if (elem.has("limit")) parseLimit(elem);
+        else if (elem.has("text")) parseTweet(elem);
         //otherwise, we don't have a proper type to work with, escape gracefully
         else logger.error("Got a bad line! API may be out of date! " + line);
     }
@@ -191,8 +193,8 @@ public class TwitterStream implements Runnable {
      * Parse deletion objects and give them to the handler
      * @param obj The object to parse
      */
-    private void parseDeletion(JSONObject obj) {
-        SDeletion del = SDeletion.parseJSON(obj);
+    private void parseDeletion(JsonObject elem) {
+        SDeletion del = SDeletion.parseJSON(elem);
         if (del != null) this.handler.addDeletion(del);
     }
 
@@ -200,8 +202,8 @@ public class TwitterStream implements Runnable {
      * Parse limit objects and give them to the handler
      * @param obj The object to parse
      */
-    private void parseLimit(JSONObject obj) {
-        SLimit lim = SLimit.parseJSON(obj);
+    private void parseLimit(JsonObject elem) {
+        SLimit lim = SLimit.parseJSON(elem);
         if (lim != null) this.handler.addLimit(lim);
     }
 
@@ -209,8 +211,8 @@ public class TwitterStream implements Runnable {
      * Parse tweet objects and give them to the handler
      * @param obj The object to parse
      */
-    private void parseTweet(JSONObject obj) {
-        STweet tweet = STweet.parseJSON(obj);
+    private void parseTweet(JsonObject elem) {
+        STweet tweet = STweet.parseJSON(elem);
         if (tweet != null) this.handler.addTweet(tweet);
     }
 

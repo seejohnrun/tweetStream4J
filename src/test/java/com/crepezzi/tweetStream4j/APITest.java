@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  */
 public class APITest {
 
-    private static final TwitterStreamConfiguration tws = new TwitterStreamConfiguration("seejohnrun", "");
+    private static final TwitterStreamConfiguration tws = new TwitterStreamConfiguration("seejohnrun", "699kpdze57");
 
     @Test
     public void testSampleHappyPath() throws Exception {
@@ -47,7 +47,7 @@ public class APITest {
         MyTwitterStreamHandler handler = new MyTwitterStreamHandler();
 
         Collection<String> tracks = new ArrayList<String>();
-        tracks.add("obama");
+        tracks.add("twitter");
         TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks);
 
         Thread t = (new Thread(ts));
@@ -61,16 +61,36 @@ public class APITest {
         assertTrue(handler.getTweetCount() > 0);
     }
 
+    @Test
+    // Make sure we eventually get a tweet with reply info
+    public void testInReply() throws Exception {
+
+        Collection<String> tracks = new ArrayList<String>();
+        tracks.add("twitter");
+
+        MyTwitterStreamHandler handler = new MyTwitterStreamHandler();
+        TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks);
+
+        Thread t = (new Thread(ts));
+        t.start();
+
+        waitSomeTime(10000);
+        ts.stop();
+
+        //make sure we get here
+        assertTrue(handler.getInReplyCount() > 0);
+    }
+
     // Ensure that stop() gets called when stopping a stream
     @Test
     public void testCloseCalled() throws Exception {
         // Make a test class that keeps track of stop being called
         class TestTwitterStreamHandler implements TwitterStreamHandler {
             public boolean success = false;
-            public void addTweet(STweet t) { }
-            public void addLimit(SLimit l) { }
-            public void addDeletion(SDeletion d) { }
-            public void stop() {
+            @Override public void addTweet(STweet t) { }
+            @Override public void addLimit(SLimit l) { }
+            @Override public void addDeletion(SDeletion d) { }
+            @Override public void stop() {
                 success = true;
             }
         }

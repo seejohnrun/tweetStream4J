@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  * Class for creating instances of TwitterStream
  * @author jcrepezzi
  */
-public final class TweetRiver {
+public class TweetRiver {
 
     private static final Log logger = LogFactory.getLog(TweetRiver.class);
     private static final String API_URL = "http://stream.twitter.com/1/";

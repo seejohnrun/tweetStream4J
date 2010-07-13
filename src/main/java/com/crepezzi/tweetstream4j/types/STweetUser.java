@@ -27,7 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.crepezzi.tweetstream4j.types;
 
-import net.sf.json.JSONObject;
+import com.crepezzi.tweetstream4j.ext.OptionalGson;
+import com.google.gson.JsonObject;
 
 /**
  * A class representing a user in the twitterverse.
@@ -38,10 +39,10 @@ public final class STweetUser {
     private Boolean profileBackgroundTile, verified, geoEnabled, notifications, isProtected, following;
     private String url, profileSidebarBorderColor, description, profileBackgroundColor,
             profileTextColor, profileImageUrl, timeZone, location, name, profileLinkColor, screenName, profileBackgroundImageUrl;
-    private int followersCount, friendsCount, favouritesCount, statusesCount, utcOffset;
+    private Integer followersCount, friendsCount, favouritesCount, statusesCount, utcOffset;
     private String createdAt;
     private Long userId;
-    private JSONObject json;
+    private transient JsonObject json;
 
     private STweetUser() {
         //no creating tweet users
@@ -52,38 +53,38 @@ public final class STweetUser {
      * @param obj The JSON object to parse
      * @return The resultant STweetUser
      */
-    static STweetUser parseJSON(JSONObject obj) {
+    static STweetUser parseJSON(JsonObject obj) {
         STweetUser user = new STweetUser();
         user.json = obj;
-        user.userId = obj.getLong("id");
-        user.screenName = obj.getString("screen_name");
-        user.profileBackgroundTile = obj.getBoolean("profile_background_tile");
-        user.verified = obj.getBoolean("verified");
-        user.geoEnabled = obj.getBoolean("geo_enabled");
-        user.notifications = obj.optBoolean("notifications");
-        user.isProtected = obj.getBoolean("protected");
-        user.following = obj.optBoolean("following");
-        user.url = obj.getString("url");
-        user.profileSidebarBorderColor = obj.getString("profile_sidebar_border_color");
-        user.description = obj.getString("description");
-        user.profileBackgroundColor = obj.getString("profile_background_color");
-        user.profileTextColor = obj.getString("profile_text_color");
-        user.profileImageUrl = obj.getString("profile_image_url");
-        user.timeZone = obj.getString("time_zone");
-        user.location = obj.getString("location");
-        user.name = obj.getString("name");
-        user.profileLinkColor = obj.getString("profile_link_color");
-        user.profileBackgroundImageUrl = obj.getString("profile_background_image_url");
-        user.followersCount = obj.getInt("followers_count");
-        user.friendsCount = obj.getInt("friends_count");
-        user.favouritesCount = obj.getInt("favourites_count");
-        user.statusesCount = obj.getInt("statuses_count");
-        user.createdAt = obj.getString("created_at");
-        user.utcOffset = obj.optInt("utc_offset");
+        user.userId = obj.get("id").getAsLong();
+        user.screenName = obj.get("screen_name").getAsString();
+        user.profileBackgroundTile = obj.get("profile_background_tile").getAsBoolean();
+        user.verified = obj.get("verified").getAsBoolean();
+        user.geoEnabled = obj.get("geo_enabled").getAsBoolean();
+        user.notifications = OptionalGson.getAsBoolean(obj, "notifications");
+        user.following = OptionalGson.getAsBoolean(obj, "following");
+        user.isProtected = obj.get("protected").getAsBoolean();
+        user.url = OptionalGson.getAsString(obj, "url");
+        user.profileSidebarBorderColor = obj.get("profile_sidebar_border_color").getAsString();
+        user.description = OptionalGson.getAsString(obj, "description");
+        user.profileBackgroundColor = obj.get("profile_background_color").getAsString();
+        user.profileTextColor = obj.get("profile_text_color").getAsString();
+        user.profileImageUrl = obj.get("profile_image_url").getAsString();
+        user.timeZone = OptionalGson.getAsString(obj, "time_zone");
+        user.location = OptionalGson.getAsString(obj, "location");
+        user.name = obj.get("name").getAsString();
+        user.profileLinkColor = obj.get("profile_link_color").getAsString();
+        user.profileBackgroundImageUrl = obj.get("profile_background_image_url").getAsString();
+        user.followersCount = obj.get("followers_count").getAsInt();
+        user.friendsCount = obj.get("friends_count").getAsInt();
+        user.favouritesCount = obj.get("favourites_count").getAsInt();
+        user.statusesCount = obj.get("statuses_count").getAsInt();
+        user.createdAt = obj.get("created_at").getAsString();
+        user.utcOffset = OptionalGson.getAsInt(obj, "utc_offset");
         return user;
     }
 
-    public JSONObject getJSON() {
+    public JsonObject getJSON() {
         return this.json;
     }
 

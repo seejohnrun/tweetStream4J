@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.crepezzi.tweetstream4j.types;
 
-import net.sf.json.JSONObject;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -42,7 +42,7 @@ import net.sf.json.JSONObject;
 public final class SDeletion {
 
     private Long statusId, userId;
-    private JSONObject json;
+    private transient JsonObject json;
     
     private SDeletion() {
         //no creating your own deletions
@@ -53,17 +53,17 @@ public final class SDeletion {
      * @param obj The JSON object to parse
      * @return The resultant SDeletion.
      */
-    public static SDeletion parseJSON(JSONObject obj) {
+    public static SDeletion parseJSON(JsonObject obj) {
         //get the proper object
         SDeletion del = new SDeletion();
         del.json = obj;
-        obj = obj.getJSONObject("delete").getJSONObject("status");
-        del.statusId = obj.getLong("id");
-        del.userId = obj.getLong("user_id");
+        obj = obj.getAsJsonObject("delete").getAsJsonObject("status");
+        del.statusId = obj.get("id").getAsLong();
+        del.userId = obj.get("user_id").getAsLong();
         return del;
     }
 
-    public JSONObject getJSON() {
+    public JsonObject getJSON() {
         return this.json;
     }
 

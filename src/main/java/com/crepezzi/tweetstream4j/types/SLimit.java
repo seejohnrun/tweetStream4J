@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.crepezzi.tweetstream4j.types;
 
-import net.sf.json.JSONObject;
+import com.google.gson.JsonObject;
 
 /**
  * An object representing a limit from twitter
@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
 public final class SLimit {
 
     private Long track;
-    private JSONObject json;
+    private transient JsonObject json;
 
     private SLimit() {
         //no creating limits
@@ -52,14 +52,14 @@ public final class SLimit {
      * @param obj The JSONObject to parse
      * @return The resultant SLimit
      */
-    public static SLimit parseJSON(JSONObject obj) {
+    public static SLimit parseJSON(JsonObject obj) {
         SLimit lim = new SLimit();
         lim.json = obj;
-        lim.track = obj.getJSONObject("limit").getLong("track");
+        lim.track = obj.getAsJsonObject("limit").get("track").getAsLong();
         return lim;
     }
 
-    public JSONObject getJSON() {
+    public JsonObject getJSON() {
         return this.json;
     }
     
