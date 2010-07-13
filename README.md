@@ -59,12 +59,8 @@ similarly simple:
 
 ### Full Dependency List
 
-* JSON-LIB 2.3
-* EZMorph 1.0.6
-* Commons - *BeanUtils*
+* Gson 1.4
 * Commons - *Lang*
-* Commons - *Collections*
-* Commons - *Logging*
 
 ---
 
