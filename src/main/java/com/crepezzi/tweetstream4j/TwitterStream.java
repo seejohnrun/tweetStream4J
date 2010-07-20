@@ -61,7 +61,6 @@ public class TwitterStream implements Runnable {
 
     private boolean stopRequested = false;
 
-    private String authb64;
     private String postContents;
     private static final int DEFAULT_TIMEOUT = 1000, STEP_TIMEOUT = 1000, MAX_TIMEOUT = 16000;
     private int timeout = DEFAULT_TIMEOUT;
@@ -73,9 +72,8 @@ public class TwitterStream implements Runnable {
      * @param handler The handler to send items to
      * @param authb64 A base64 encoding of the Credentials
      */
-    TwitterStream(String urlString, String postContents, TwitterStreamHandler handler, String authb64) {
+    TwitterStream(String urlString, String postContents, TwitterStreamHandler handler) {
         this.postContents = postContents;
-        this.authb64 = authb64;
         try {
             this.url = new URL(urlString);
             logger.debug("urlString: '" + urlString + "' / postContents: '" + postContents + "'");
@@ -140,9 +138,6 @@ public class TwitterStream implements Runnable {
      * @throws IOException Connection problem
      */
     private void doConnection() throws IOException {
-        this.conn.setDoOutput(true);
-        //set authorization
-        this.conn.setRequestProperty("Authorization", authb64);
         //set up an output stream
         if (this.postContents != null) {
             OutputStream os = this.conn.getOutputStream();

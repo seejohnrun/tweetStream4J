@@ -36,8 +36,8 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.net.ssl.HttpsURLConnection;
 import oauth.signpost.exception.OAuthException;
+import oauth.signpost.http.HttpRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -182,8 +182,9 @@ public class TweetRiver {
             return null;
         }
         // Sign the connection
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        tws.getConsumer().sign(conn); // yay oauth
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpRequest request = tws.getConsumer().sign(conn);
+        conn.setDoOutput(true);
         return conn;
     }
 

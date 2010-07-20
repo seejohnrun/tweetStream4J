@@ -59,12 +59,14 @@ public final class TwitterStreamConfiguration {
     public TwitterStreamConfiguration(String key, String secret) throws OAuthException, OAuthCommunicationException {
         this.setConsumerKeyAndSecret(key, secret);
     }
-
+    
     /**
      * Get the authorization URL to visit.
      * @return
      */
-    public String getAuthorizationUrl() {
+    public String getAuthorizationUrl() throws OAuthException {
+        provider = new DefaultOAuthProvider(TWITTER_REQUEST, TWITTER_ACCESS, TWITTER_AUTHORIZE);
+        authUrl = provider.retrieveRequestToken(consumer, OAuth.OUT_OF_BAND);
         return this.authUrl;
     }
 
@@ -177,8 +179,6 @@ public final class TwitterStreamConfiguration {
      */
     private void restartOAuthWorkflow() throws OAuthException, OAuthCommunicationException {
         consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        provider = new DefaultOAuthProvider(TWITTER_REQUEST, TWITTER_ACCESS, TWITTER_AUTHORIZE);
-        authUrl = provider.retrieveRequestToken(consumer, OAuth.OUT_OF_BAND);
     }
 
     protected OAuthConsumer getConsumer() {

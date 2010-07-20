@@ -5,7 +5,7 @@ package com.crepezzi.tweetStream4j;
     <john@crepezzi.com>
 */
 
-import javax.swing.JOptionPane;
+import org.junit.Before;
 import com.crepezzi.tweetstream4j.TweetRiver;
 import com.crepezzi.tweetstream4j.TwitterStream;
 import com.crepezzi.tweetstream4j.TwitterStreamConfiguration;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthException;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -28,21 +27,17 @@ import static org.junit.Assert.*;
  */
 public class APITest {
 
-    private static final String CONSUMER_KEY = "KkWZJyZ9LMVFNNt6pmxoDg";
-    private static final String CONSUMER_SECRET = "uWI0MvkJ0wHqCEF8dsVR0yGPBRjdCJvcpAJv0M7gg";
+    private static final String CONSUMER_KEY = "";
+    private static final String CONSUMER_SECRET = "";
     private static TwitterStreamConfiguration tws;
 
-    @BeforeClass
-    public static void setUpConfiguration() throws OAuthException, IOException, OAuthCommunicationException {
+    private static final String TOKEN = "";
+    private static final String TOKEN_SECRET = "";
+
+    @Before
+    public void setUpConfiguration() throws OAuthException, IOException, OAuthCommunicationException {
         tws = new TwitterStreamConfiguration(CONSUMER_KEY, CONSUMER_SECRET);
-        String authUrl = tws.getAuthorizationUrl();
-        System.out.println("Please visit '" + authUrl + "' to get your PIN");
-        // Read the PIN from the user
-        // UGHHHHHHHHHHHHHHHHHHHHHH
-        String pin = JOptionPane.showInputDialog(null, "The PIN?");
-        tws.authorize(pin.trim());
-        System.out.println("Token: " + tws.getToken());
-        System.out.println("Token secret: " + tws.getTokenSecret());
+        tws.setTokenAndSecret(TOKEN, TOKEN_SECRET);
         // Once we're authorized we should be good to go!!!
     }
 
