@@ -27,41 +27,99 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.crepezzi.tweetstream4j;
 
-import com.crepezzi.tweetstream4j.ext.Base64Coder;
+import oauth.signpost.OAuth;
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
+import oauth.signpost.basic.DefaultOAuthConsumer;
+import oauth.signpost.basic.DefaultOAuthProvider;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A configuration class for describing to TweetRiver how to set up a TwitterStream.
  * @author jcrepezzi
  */
-public class TwitterStreamConfiguration {
+public final class TwitterStreamConfiguration {
 
-    private String b64;
+    private String consumerKey, consumerSecret;
     private Integer count = null, delimitedLength = null;
 
-    /**
-     * Username and password are required
-     * @param username The username to use
-     * @param password The password to use
-     */
-    public TwitterStreamConfiguration(String username, String password) {
-        this.setCredentials(username, password);
+    private static final String TWITTER_REQUEST = "https://api.twitter.com/oauth/request_token";
+    private static final String TWITTER_ACCESS = "https://api.twitter.com/oauth/access_token";
+    private static final String TWITTER_AUTHORIZE = "https://api.twitter.com/oauth/authorize";
+
+    private static Log logger = LogFactory.getLog(TwitterStreamConfiguration.class);
+
+    private String authUrl = null;
+    private OAuthProvider provider;
+    private OAuthConsumer consumer;
+
+    public TwitterStreamConfiguration(String key, String secret) throws OAuthException, OAuthCommunicationException {
+        this.setConsumerKeyAndSecret(key, secret);
     }
 
     /**
-     * Get a base 64 encoding used for basic HTTP Auth.
-     * @return Base 64 encoding (String)
+     * Get the authorization URL to visit.
+     * @return
      */
-    protected String getb64() {
-        return this.b64;
+    public String getAuthorizationUrl() {
+        return this.authUrl;
     }
 
     /**
-     * Set the base 64 string from the username (don't actually store the username/pass)
-     * @param username
-     * @param password
+     * Authorize the app by passing the PIN retrieved by visiting
+     * the URL returned by .getAuthorizationUrl
+     * @param PIN The PIN to authorize with
      */
-    public void setCredentials(String username, String password) {
-        this.b64 = Base64Coder.encodeString(username + ":" + password);
+    public void authorize(String PIN) throws OAuthException, OAuthCommunicationException {
+        this.provider.retrieveAccessToken(consumer, PIN);
+    }
+
+    /**
+     * Get the consumer's token
+     * @return The token
+     */
+    public String getToken() {
+        return this.consumer.getToken();
+    }
+
+    /**
+     * Get the consumer's token secret
+     * @return The token secret
+     */
+    public String getTokenSecret() {
+        return this.consumer.getTokenSecret();
+    }
+
+    /**
+     * Set the token and secret on the consumer directly
+     * @param token The token
+     * @param tokenSecret The token secret
+     */
+    public void setTokenAndSecret(String token, String tokenSecret) {
+        this.consumer.setTokenWithSecret(token, tokenSecret);
+    }
+
+    /**
+     * Return whether or not the provider has been authorized
+     * @return
+     */
+    public boolean isAuthorized() {
+        return this.provider.isOAuth10a();
+    }
+
+    /**
+     * Set the consumer key
+     * @param key The consumer key
+     * @param secret The consumer secret
+     * Note: This will trigger a restart of the OAuth workflow.
+     */
+    public void setConsumerKeyAndSecret(String key, String secret) throws OAuthException, OAuthCommunicationException {
+        this.consumerKey = key;
+        this.consumerSecret = secret;
+        this.restartOAuthWorkflow();
     }
 
     /**
@@ -110,6 +168,21 @@ public class TwitterStreamConfiguration {
      */
     public void setDelimitedLength(Integer delimited_length) {
         this.delimitedLength = delimited_length;
+    }
+
+    /**
+     * Restart the OAuth workflow - used in case you have to change a
+     * key or secret for any reason.
+     * @throws OAuthException
+     */
+    private void restartOAuthWorkflow() throws OAuthException, OAuthCommunicationException {
+        consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
+        provider = new DefaultOAuthProvider(TWITTER_REQUEST, TWITTER_ACCESS, TWITTER_AUTHORIZE);
+        authUrl = provider.retrieveRequestToken(consumer, OAuth.OUT_OF_BAND);
+    }
+
+    protected OAuthConsumer getConsumer() {
+        return this.consumer;
     }
 
 }

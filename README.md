@@ -1,22 +1,23 @@
 # TweetStream4J
 
 *This is a Java binding for the Twitter API written in a way that will allow Java developers to quickly and successfully work with the Twitter API.*  
-*It is in complete working order, but there are some definite issues as it is only one day old.  See the Issues tab for more info*
+*It is in complete working order.  __Uses OAuth authentication__.
 
 ---
 
 ### Example 1:
 
-    TwitterStreamConfiguraion tws = new TwitterStreamConfiguration("username", "password");
-    MyTwitterHandler handler = new MyTwitterHandler();
+    TwitterStreamConfiguration tws = new TwitterStreamConfiguration(KEY, SECRET);
+    tws.getAuthorizationUrl(); // URL to visit for PIN
+    tws.authorize(pin); // enter the pin from the site
+    tws.getToken(); tws.getTokenSecret(); // hold onto these
+
+    MyTwitterHandler handler = new MyTwitterHandler();    
 
     TwitterStream ts = TweetRiver.sample(tws, handler);
     (new Thread(ts)).start();
 
 ### Example 2:
-
-    TwitterStreamConfiguration tws = new TwitterStreamConfiguration("username", "password");
-    MyTwitterHandler handler = new MyTwitterHandler();
 
     Collection<String> tracks = new ArrayList<String>();
     tracks.add("twitter");
@@ -61,18 +62,7 @@ similarly simple:
 
 * Gson 1.4
 * Commons - *Lang*
-
----
-
-### Maven json-lib dependency 
-
-for some reason json lib artifacts are deployed prefixed with the jdk version they're compatilble with, which makes the build fail  
-here is a work-around to install it into your local repo:
-
-* curl -O http://repo1.maven.org/maven2/net/sf/json-lib/json-lib/2.2.3/json-lib-2.2.3-jdk15.jar
-  
-* mvn install:install-file -DgroupId=net.sf.json-lib -DartifactId=json-lib -Dversion=2.2.3 -Dpackaging=jar -Dfile=json-lib-2.2.3-jdk15.jar
-    rm json-lib-2.2.3-jdk15.jar
+* Signpost (core)
 
 ---
 

@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -81,7 +82,13 @@ public class TwitterStream implements Runnable {
         } catch (MalformedURLException ex) {
             logger.error("Logger is potentially flawed or outdated. " + ex.getLocalizedMessage());
         }
+    }
+
+    TwitterStream(HttpURLConnection conn, String postBody, TwitterStreamHandler handler) {
+        this.postContents = postBody;
+        this.conn = conn;
         this.handler = handler;
+        logger.debug("urlString: '" + conn.getURL().toString() + "' / postContents: '" + postContents + "'");
     }
 
     /**
@@ -108,7 +115,7 @@ public class TwitterStream implements Runnable {
         while (true) {
             try {
                 //open a connection
-                this.openConnection();
+                this.doConnection();
                 //continuously read tweets and other things, passing them to the handler as appropriate
                 //@TODO, make this non-blocking
                 this.readIncoming();
@@ -132,9 +139,7 @@ public class TwitterStream implements Runnable {
      * accept incoming data (stream).
      * @throws IOException Connection problem
      */
-    private void openConnection() throws IOException {
-        this.conn = null;
-        this.conn = url.openConnection();
+    private void doConnection() throws IOException {
         this.conn.setDoOutput(true);
         //set authorization
         this.conn.setRequestProperty("Authorization", authb64);

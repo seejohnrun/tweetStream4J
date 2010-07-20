@@ -27,11 +27,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.crepezzi.tweetstream4j;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.net.ssl.HttpsURLConnection;
+import oauth.signpost.exception.OAuthException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -73,15 +79,17 @@ public class TweetRiver {
      * @return A TwitterStream (extends Runnable) which will stream tweets following
      *         the filter parameters.
      */
-    public static TwitterStream filter(TwitterStreamConfiguration tws, TwitterStreamHandler handler, Collection<Long> follows, Collection<String> tracks) {
+    public static TwitterStream filter(TwitterStreamConfiguration tws, TwitterStreamHandler handler,
+            Collection<Long> follows, Collection<String> tracks) throws IOException, OAuthException {
+
         String postBody = buildFilterContents(follows, tracks);
         //build get params
         HashMap<String, String> getParams = new HashMap<String, String>();
         if (tws.getCount() != null) getParams.put("count", tws.getCount().toString());
         if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
         //send request
-        String url = buildURL("statuses/filter.json", getParams);
-        return new TwitterStream(url, postBody, handler, tws.getb64());
+        HttpURLConnection conn = buildConnection("statuses/filter.json", getParams, tws);
+        return new TwitterStream(conn, postBody, handler);
     }
 
     /**
@@ -97,13 +105,15 @@ public class TweetRiver {
      * @return A TwitterStream (extends Runnable) which will stream tweets
      *         returned from this api call.
      */
-    public static TwitterStream retweet(TwitterStreamConfiguration tws, TwitterStreamHandler handler) {
+    public static TwitterStream retweet(TwitterStreamConfiguration tws, TwitterStreamHandler handler)
+            throws IOException, OAuthException {
+        
         //build get params
         HashMap<String, String> getParams = new HashMap<String, String>();
         if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
         //send request
-        String url = buildURL("statuses/retweet.json", getParams);
-        return new TwitterStream(url, null, handler, tws.getb64());
+        HttpURLConnection conn = buildConnection("statuses/retweet.json", getParams, tws);
+        return new TwitterStream(conn, null, handler);
     }
 
     /**
@@ -119,14 +129,16 @@ public class TweetRiver {
      * @return A TwitterStream (extends Runnable) which will stream tweets
      *         returned from this api call.
      */
-    public static TwitterStream firehose(TwitterStreamConfiguration tws, TwitterStreamHandler handler) {
+    public static TwitterStream firehose(TwitterStreamConfiguration tws, 
+            TwitterStreamHandler handler) throws IOException, OAuthException {
+        
         //build get params
         HashMap<String, String> getParams = new HashMap<String, String>();
         if (tws.getCount() != null) getParams.put("count", tws.getCount().toString());
         if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
         //send request
-        String url = buildURL("statuses/firehose.json", getParams);
-        return new TwitterStream(url, null, handler, tws.getb64());
+        HttpURLConnection conn = buildConnection("statuses/firehose.json", getParams, tws);
+        return new TwitterStream(conn, null, handler);
     }
 
     /**
@@ -143,14 +155,36 @@ public class TweetRiver {
      * @return A TwitterStream (extends Runnable) which will stream tweets
      *         returned from this api call.
      */
-    public static TwitterStream sample(TwitterStreamConfiguration tws, TwitterStreamHandler handler) {
+    public static TwitterStream sample(TwitterStreamConfiguration tws,
+            TwitterStreamHandler handler) throws IOException, OAuthException {
+
         //build get params
         HashMap<String, String> getParams = new HashMap<String, String>();
         if (tws.getCount() != null) getParams.put("count", tws.getCount().toString());
         if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
         //send request
-        String url = buildURL("statuses/sample.json", getParams);
-        return new TwitterStream(url, null, handler, tws.getb64());
+        HttpURLConnection conn = buildConnection("statuses/sample.json", getParams, tws);
+        return new TwitterStream(conn, null, handler);
+    }
+
+    // Build a connection
+    private static HttpURLConnection buildConnection(String base, Map<String, String> params,
+            TwitterStreamConfiguration tws) throws IOException, OAuthException {
+        
+        String urlString = buildUrlString(base, params);
+        if (urlString == null) return null;
+        URL url = null;
+        try {
+            // Turn it into a URL
+            url = new URL(urlString);
+        } catch (MalformedURLException ex) {
+            logger.fatal("Wrapper may be out of date.  Malformed URL caught.");
+            return null;
+        }
+        // Sign the connection
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        tws.getConsumer().sign(conn); // yay oauth
+        return conn;
     }
 
     /**
@@ -160,8 +194,8 @@ public class TweetRiver {
      * @param params List of parameters
      * @return A URL String fitting the specified conditions
      */
-    private static String buildURL(String base, Map<String, String> params) {
-        if (params == null || params.size() == 0) return API_URL + base;
+    private static String buildUrlString(String base, Map<String, String> params) {
+        if (params == null || params.isEmpty()) return API_URL + base;
         //construct get parameters list
         StringBuilder get = new StringBuilder();
         boolean first = true;
