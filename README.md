@@ -61,8 +61,10 @@ similarly simple:
 ### Full Dependency List
 
 * Gson 1.4
-* Commons - *Lang*
-* Signpost (core)
+* Commons Logger
+* Commons HttpClient 4
+* Signpost (commons 4)
+
 
 ---
 
