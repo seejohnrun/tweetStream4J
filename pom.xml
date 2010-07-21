@@ -31,7 +31,7 @@
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
-      <artifactId>signpost-core</artifactId>
+      <artifactId>signpost-commonshttp4</artifactId>
       <version>1.2.1.1</version>
     </dependency>
   </dependencies>

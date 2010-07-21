@@ -27,12 +27,12 @@ import static org.junit.Assert.*;
  */
 public class APITest {
 
-    private static final String CONSUMER_KEY = "";
-    private static final String CONSUMER_SECRET = "";
+    private static final String CONSUMER_KEY = "KkWZJyZ9LMVFNNt6pmxoDg";
+    private static final String CONSUMER_SECRET = "uWI0MvkJ0wHqCEF8dsVR0yGPBRjdCJvcpAJv0M7gg";
     private static TwitterStreamConfiguration tws;
 
-    private static final String TOKEN = "";
-    private static final String TOKEN_SECRET = "";
+    private static final String TOKEN = "12332042-Ql4ryiwsIItryn9WZrlJD0lPUaaDES5ib1VYLOJrg";
+    private static final String TOKEN_SECRET = "wgNsRajf6HYm1oyHCxy9mF3cx1PuEMLhhIJTAf4Cgq8";
 
     @Before
     public void setUpConfiguration() throws OAuthException, IOException, OAuthCommunicationException {
@@ -64,7 +64,49 @@ public class APITest {
 
         Collection<String> tracks = new ArrayList<String>();
         tracks.add("twitter");
-        TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks);
+        TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks, null);
+
+        Thread t = (new Thread(ts));
+        t.start();
+
+        //stop after a certain number of seconds
+        waitSomeTime(5000);
+        ts.stop();
+
+        //make sure some tweets came in
+        assertTrue(handler.getTweetCount() > 0);
+    }
+
+    @Test
+    public void testFilterByLocation() throws Exception {
+        MyTwitterStreamHandler handler = new MyTwitterStreamHandler();
+
+        Collection<String> locations = new ArrayList<String>();
+        locations.add("-122.75,36.8,-121.75,37.8"); // tweets in NYC
+        TwitterStream ts = TweetRiver.filter(tws, handler, null, null, locations);
+
+        Thread t = (new Thread(ts));
+        t.start();
+
+        //stop after a certain number of seconds
+        waitSomeTime(5000);
+        ts.stop();
+
+        //make sure some tweets came in
+        assertTrue(handler.getTweetCount() > 0);
+    }
+
+    @Test
+    public void testFilterByLocationAndTrack() throws Exception {
+        MyTwitterStreamHandler handler = new MyTwitterStreamHandler();
+
+        Collection<String> locations = new ArrayList<String>();
+        locations.add("-122.75,36.8,-121.75,37.8"); // tweets in NYC
+
+        Collection<String> tracks = new ArrayList<String>();
+        tracks.add("twitter");
+
+        TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks, locations);
 
         Thread t = (new Thread(ts));
         t.start();
@@ -85,7 +127,7 @@ public class APITest {
         tracks.add("twitter");
 
         MyTwitterStreamHandler handler = new MyTwitterStreamHandler();
-        TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks);
+        TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks, null);
 
         Thread t = (new Thread(ts));
         t.start();

@@ -30,8 +30,8 @@ package com.crepezzi.tweetstream4j;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-import oauth.signpost.basic.DefaultOAuthConsumer;
-import oauth.signpost.basic.DefaultOAuthProvider;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthException;
 import org.apache.commons.logging.Log;
@@ -65,7 +65,7 @@ public final class TwitterStreamConfiguration {
      * @return
      */
     public String getAuthorizationUrl() throws OAuthException {
-        provider = new DefaultOAuthProvider(TWITTER_REQUEST, TWITTER_ACCESS, TWITTER_AUTHORIZE);
+        provider = new CommonsHttpOAuthProvider(TWITTER_REQUEST, TWITTER_ACCESS, TWITTER_AUTHORIZE);
         authUrl = provider.retrieveRequestToken(consumer, OAuth.OUT_OF_BAND);
         return this.authUrl;
     }
@@ -178,7 +178,7 @@ public final class TwitterStreamConfiguration {
      * @throws OAuthException
      */
     private void restartOAuthWorkflow() throws OAuthException, OAuthCommunicationException {
-        consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
+        consumer = new CommonsHttpOAuthConsumer(consumerKey, consumerSecret);
     }
 
     protected OAuthConsumer getConsumer() {

@@ -29,17 +29,21 @@ package com.crepezzi.tweetstream4j;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import oauth.signpost.exception.OAuthException;
-import oauth.signpost.http.HttpRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 
 /**
  * Class for creating instances of TwitterStream
@@ -49,6 +53,13 @@ public class TweetRiver {
 
     private static final Log logger = LogFactory.getLog(TweetRiver.class);
     private static final String API_URL = "http://stream.twitter.com/1/";
+
+    private static final String
+            SAMPLE_URL = API_URL + "statuses/sample.json",
+            FILTER_URL = API_URL + "statuses/filter.json",
+            RETWEET_URL = API_URL + "statuses/retweet.json",
+            LINKS_URL = API_URL + "statuses/links.json",
+            FIREHOSE_URL = API_URL + "statuses/firehose.json";
 
     /**
      * Do not create instances of tweetriver
@@ -76,20 +87,21 @@ public class TweetRiver {
      * @param handler The handler to send results to
      * @param follows The list of user ids to filter through
      * @param tracks The list of tracks to filter through
+     * @param locations The list of location bounding boxes to track
      * @return A TwitterStream (extends Runnable) which will stream tweets following
      *         the filter parameters.
      */
     public static TwitterStream filter(TwitterStreamConfiguration tws, TwitterStreamHandler handler,
-            Collection<Long> follows, Collection<String> tracks) throws IOException, OAuthException {
+            Collection<Long> follows, Collection<String> tracks, Collection<String> locations) throws IOException, OAuthException {
 
-        String postBody = buildFilterContents(follows, tracks);
+        String postBody = buildFilterContents(follows, tracks, locations);
         //build get params
-        HashMap<String, String> getParams = new HashMap<String, String>();
-        if (tws.getCount() != null) getParams.put("count", tws.getCount().toString());
-        if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
+        HttpParams getParams = new BasicHttpParams();
+        if (tws.getCount() != null) getParams.setIntParameter("count", tws.getCount());
+        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
         //send request
-        HttpURLConnection conn = buildConnection("statuses/filter.json", getParams, tws);
-        return new TwitterStream(conn, postBody, handler);
+        HttpRequestBase conn = buildConnection(FILTER_URL, getParams, tws, postBody);
+        return new TwitterStream(conn, handler);
     }
 
     /**
@@ -109,11 +121,36 @@ public class TweetRiver {
             throws IOException, OAuthException {
         
         //build get params
-        HashMap<String, String> getParams = new HashMap<String, String>();
-        if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
+        HttpParams getParams = new BasicHttpParams();
+        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
         //send request
-        HttpURLConnection conn = buildConnection("statuses/retweet.json", getParams, tws);
-        return new TwitterStream(conn, null, handler);
+        HttpRequestBase conn = buildConnection(RETWEET_URL, getParams, tws);
+        return new TwitterStream(conn, handler);
+    }
+
+    /**
+     * API Method to access the 'retweet' method of the Twitter Streaming API.
+     * from twitter:
+     *      Returns all retweets. The retweet stream is not a generally
+     *      available resource. Few applications require this level of access.
+     *      Creative use of a combination of other resources and various access
+     *      levels can satisfy nearly every application use case.
+     * @param tws A TwitterStreamConfiguration object which contains the username
+     *            and password to use as well as any count / delimited parameters
+     * @param handler The handler to send results to
+     * @return A TwitterStream (extends Runnable) which will stream tweets
+     *         returned from this api call.
+     */
+    public static TwitterStream links(TwitterStreamConfiguration tws, TwitterStreamHandler handler)
+            throws IOException, OAuthException {
+
+        //build get params
+        HttpParams getParams = new BasicHttpParams();
+        if (tws.getCount() != null) getParams.setIntParameter("count", tws.getCount());
+        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
+        //send request
+        HttpRequestBase conn = buildConnection(LINKS_URL, getParams, tws);
+        return new TwitterStream(conn, handler);
     }
 
     /**
@@ -133,12 +170,12 @@ public class TweetRiver {
             TwitterStreamHandler handler) throws IOException, OAuthException {
         
         //build get params
-        HashMap<String, String> getParams = new HashMap<String, String>();
-        if (tws.getCount() != null) getParams.put("count", tws.getCount().toString());
-        if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
+        HttpParams getParams = new BasicHttpParams();
+        if (tws.getCount() != null) getParams.setIntParameter("count", tws.getCount());
+        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
         //send request
-        HttpURLConnection conn = buildConnection("statuses/firehose.json", getParams, tws);
-        return new TwitterStream(conn, null, handler);
+        HttpRequestBase conn = buildConnection(FIREHOSE_URL, getParams, tws);
+        return new TwitterStream(conn, handler);
     }
 
     /**
@@ -159,33 +196,45 @@ public class TweetRiver {
             TwitterStreamHandler handler) throws IOException, OAuthException {
 
         //build get params
-        HashMap<String, String> getParams = new HashMap<String, String>();
-        if (tws.getCount() != null) getParams.put("count", tws.getCount().toString());
-        if (tws.getDelimitedLength() != null) getParams.put("delimited", tws.getDelimitedLength().toString());
+        HttpParams getParams = new BasicHttpParams();
+        if (tws.getCount() != null) getParams.setParameter("count", tws.getCount().toString());
+        if (tws.getDelimitedLength() != null) getParams.setParameter("delimited", tws.getDelimitedLength().toString());
         //send request
-        HttpURLConnection conn = buildConnection("statuses/sample.json", getParams, tws);
-        return new TwitterStream(conn, null, handler);
+        HttpRequestBase request = buildConnection(SAMPLE_URL, getParams, tws);
+        return new TwitterStream(request, handler);
+    }
+
+    // Convenience Method
+    private static HttpRequestBase buildConnection(String urlString, HttpParams params, TwitterStreamConfiguration tws) throws OAuthException {
+        return buildConnection(urlString, params, tws, null);
     }
 
     // Build a connection
-    private static HttpURLConnection buildConnection(String base, Map<String, String> params,
-            TwitterStreamConfiguration tws) throws IOException, OAuthException {
-        
-        String urlString = buildUrlString(base, params);
-        if (urlString == null) return null;
-        URL url = null;
-        try {
-            // Turn it into a URL
-            url = new URL(urlString);
-        } catch (MalformedURLException ex) {
-            logger.fatal("Wrapper may be out of date.  Malformed URL caught.");
-            return null;
+    private static HttpRequestBase buildConnection(String base, HttpParams params,
+            TwitterStreamConfiguration tws, String postContent) throws OAuthException {
+
+        if (postContent != null) {
+            HttpPost method = new HttpPost(base);
+            method.setParams(params);
+            try {
+                // Set the content to be the entity
+                StringEntity postEntity = new StringEntity(postContent, "UTF-8");
+                postEntity.setContentType("application/x-www-form-urlencoded");
+                method.setEntity(postEntity);
+            } catch (UnsupportedEncodingException ex) {
+                logger.fatal("Unsupported encoding", ex);
+            }
+            tws.getConsumer().sign(method);
+            return method;
         }
-        // Sign the connection
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        HttpRequest request = tws.getConsumer().sign(conn);
-        conn.setDoOutput(true);
-        return conn;
+
+        else {
+            HttpGet method = new HttpGet(base);
+            method.setParams(params);
+            tws.getConsumer().sign(method);
+            return method;
+        }
+
     }
 
     /**
@@ -222,40 +271,27 @@ public class TweetRiver {
      *      follow=1,2,3&track=one,two,three
      * @param follows A collection of Users to follow :: Collection<Long>
      * @param tracks A collection of Keywords to track :: Collection<String>
+     * @param locations A collection of Bounding boxes to track :: Collection<String>
      * @return A string representing the given parameters in the proper form.
      *         Note: tracks will be URL encoded for HTTP.
      * @throws IllegalArgumentException if any of the tracks contain
      *         spaces.  Reference: http://apiwiki.twitter.com/Streaming-API-Documentation#track
      */
-    private static String buildFilterContents(Collection<Long> follows, Collection<String> tracks) {
-        StringBuilder body = new StringBuilder();
-        //set up follows
-        if (follows != null && follows.size() > 0) {
-            body.append("follow=");
-            boolean first = true;
-            for (Long l : follows) {
-                if (!first) body.append(','); else first = false;
-                body.append(l);
-            }
-        }
-        //add an (optional) &
-        if ((follows != null && follows.size() > 0) && (tracks != null && tracks.size() > 0)) body.append('&');
-        //set up tracks
-        if (tracks != null && tracks.size() > 0) {
-            body.append("track=");
-            boolean first = true;
-            for (String s : tracks) {
-                if (s.contains(" ")) throw new IllegalArgumentException("Tracks cannot contain spaces");
-                if (!first) body.append(','); else first = false;
-                try { 
-                    body.append(URLEncoder.encode(s, "UTF-8"));
-                } catch (UnsupportedEncodingException ex) {
-                    logger.error(ex.getMessage());
-                }
-            }
-        }
-        //return the body
-        return body.toString();
+    private static String buildFilterContents(Collection<Long> follows, Collection<String> tracks, Collection<String> locations) {
+        List<String> pieces = new ArrayList<String>();
+        if (follows != null && follows.size() > 0) pieces.add(list(follows, "follow=", ","));
+        if (tracks != null && tracks.size() > 0) pieces.add(list(tracks, "track=", ","));
+        if (locations != null && locations.size() > 0) pieces.add(list(locations, "locations=", ","));
+        return list(pieces, "", "&");
+    }
+
+    // Used to build URL segments
+    private static String list(Iterable iterable, String initialString, String delimiter) {
+        Iterator iterator = iterable.iterator();
+        if (!iterator.hasNext()) return ""; // empty?
+        StringBuilder buffer = new StringBuilder(initialString + iterator.next().toString());
+        while (iterator.hasNext()) buffer.append(delimiter).append(iterator.next().toString());
+        return buffer.toString();
     }
 
 }
