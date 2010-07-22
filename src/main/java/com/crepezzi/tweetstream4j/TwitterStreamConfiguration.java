@@ -44,7 +44,8 @@ import org.apache.commons.logging.LogFactory;
 public final class TwitterStreamConfiguration {
 
     private String consumerKey, consumerSecret;
-    private Integer count = null, delimitedLength = null;
+    private Integer count = null;
+    private String delimited;
 
     private static final String TWITTER_REQUEST = "https://api.twitter.com/oauth/request_token";
     private static final String TWITTER_ACCESS = "https://api.twitter.com/oauth/access_token";
@@ -154,8 +155,8 @@ public final class TwitterStreamConfiguration {
      * @return The delimited length
      * @see setDelimitedLength
      */
-    public Integer getDelimitedLength() {
-        return delimitedLength;
+    public String getDelimited() {
+        return delimited;
     }
 
     /**
@@ -166,10 +167,9 @@ public final class TwitterStreamConfiguration {
      *      are represented by a length, in bytes, a newline, and the status
      *      text that is exactly length bytes. Note that "keep-alive" newlines
      *      may be inserted before each length.
-     * @param delimited_length The delimited length to set
      */
-    public void setDelimitedLength(Integer delimited_length) {
-        this.delimitedLength = delimited_length;
+    public void setDelimited(String delimited) {
+        this.delimited = delimited;
     }
 
     /**
@@ -183,6 +183,10 @@ public final class TwitterStreamConfiguration {
 
     protected OAuthConsumer getConsumer() {
         return this.consumer;
+    }
+
+    public boolean isDelimited() {
+        return this.delimited == null;
     }
 
 }

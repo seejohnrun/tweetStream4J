@@ -98,7 +98,7 @@ public class TweetRiver {
         //build get params
         HttpParams getParams = new BasicHttpParams();
         if (tws.getCount() != null) getParams.setIntParameter("count", tws.getCount());
-        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
+        if (tws.isDelimited()) getParams.setParameter("delimited", tws.getDelimited());
         //send request
         HttpRequestBase conn = buildConnection(FILTER_URL, getParams, tws, postBody);
         return new TwitterStream(conn, handler);
@@ -122,7 +122,7 @@ public class TweetRiver {
         
         //build get params
         HttpParams getParams = new BasicHttpParams();
-        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
+        if (tws.isDelimited()) getParams.setParameter("delimited", tws.getDelimited());
         //send request
         HttpRequestBase conn = buildConnection(RETWEET_URL, getParams, tws);
         return new TwitterStream(conn, handler);
@@ -147,7 +147,7 @@ public class TweetRiver {
         //build get params
         HttpParams getParams = new BasicHttpParams();
         if (tws.getCount() != null) getParams.setIntParameter("count", tws.getCount());
-        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
+        if (tws.isDelimited()) getParams.setParameter("delimited", tws.getDelimited());
         //send request
         HttpRequestBase conn = buildConnection(LINKS_URL, getParams, tws);
         return new TwitterStream(conn, handler);
@@ -172,7 +172,7 @@ public class TweetRiver {
         //build get params
         HttpParams getParams = new BasicHttpParams();
         if (tws.getCount() != null) getParams.setIntParameter("count", tws.getCount());
-        if (tws.getDelimitedLength() != null) getParams.setIntParameter("delimited", tws.getDelimitedLength());
+        if (tws.isDelimited()) getParams.setParameter("delimited", tws.getDelimited());
         //send request
         HttpRequestBase conn = buildConnection(FIREHOSE_URL, getParams, tws);
         return new TwitterStream(conn, handler);
@@ -197,8 +197,8 @@ public class TweetRiver {
 
         //build get params
         HttpParams getParams = new BasicHttpParams();
-        if (tws.getCount() != null) getParams.setParameter("count", tws.getCount().toString());
-        if (tws.getDelimitedLength() != null) getParams.setParameter("delimited", tws.getDelimitedLength().toString());
+        if (tws.getCount() != null) getParams.setIntParameter("count", tws.getCount());
+        if (tws.isDelimited()) getParams.setParameter("delimited", tws.getDelimited());
         //send request
         HttpRequestBase request = buildConnection(SAMPLE_URL, getParams, tws);
         return new TwitterStream(request, handler);
