@@ -50,7 +50,7 @@ similarly simple:
 
 ### Install
 
-* Getting Started - http://techxplorer.com/2010/08/02/exploring-tweetstream4j/
+* Getting Started - <http://techxplorer.com/2010/08/02/exploring-tweetstream4j/>
 
 ---
 
