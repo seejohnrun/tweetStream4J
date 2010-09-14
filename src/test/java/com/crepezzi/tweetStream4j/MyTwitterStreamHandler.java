@@ -40,12 +40,15 @@ import com.crepezzi.tweetstream4j.types.STweet;
  */
 public class MyTwitterStreamHandler implements TwitterStreamHandler {
 
-    private int tweetCount = 0, limitCount = 0, deletionCount = 0;
+    private int tweetCount = 0, coordCount = 0, limitCount = 0, deletionCount = 0, inReplyCount = 0;
 
     @Override
     public void addTweet(STweet t) {
         System.out.println("TWEET! " + t.toString());
         tweetCount++;
+
+        if (t.getGeo() != null) coordCount++;
+        if (t.getInReplyToUserId() != null) inReplyCount++;
     }
 
     @Override
@@ -70,6 +73,14 @@ public class MyTwitterStreamHandler implements TwitterStreamHandler {
 
     int getDeletionCount() {
         return this.deletionCount;
+    }
+
+    int getCoordCount() {
+        return this.coordCount;
+    }
+
+    int getInReplyCount() {
+        return this.inReplyCount;
     }
 
     @Override

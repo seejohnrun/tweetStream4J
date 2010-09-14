@@ -27,11 +27,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.crepezzi.tweetstream4j.types;
 
+import com.crepezzi.tweetstream4j.ext.OptionalGson;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import net.sf.json.JSONObject;
 
 /**
  * A Class representing a streamed tweet from the Twitter streaming API.
@@ -45,7 +45,7 @@ public final class STweet {
     private String text, inReplyToScreenName, source, createdAt;
     private STweetUser user;
     private STweetGeo geo;
-    private JSONObject json;
+    private transient JsonObject json;
 
     protected STweet() {
 	  // no creating tweets
@@ -58,29 +58,28 @@ public final class STweet {
      *            The JSON object to parse
      * @return The resultant STweet
      */
-    public static STweet parseJSON(JSONObject obj) {
+    public static STweet parseJSON(JsonObject obj) {
         STweet tweet = new STweet();
         tweet.json = obj;
-        tweet.favorited = obj.getBoolean("favorited");
-        tweet.truncated = obj.getBoolean("truncated");
-        tweet.inReplyToUserId = obj.optLong("in_reply_to_user_id");
-        tweet.inReplyToStatusId = obj.optLong("in_reply_to_status_id");
-        tweet.statusId = obj.getLong("id");
-        tweet.text = obj.getString("text");
-        tweet.inReplyToScreenName = obj.getString("in_reply_to_screen_name");
-        tweet.source = obj.getString("source");
-        tweet.createdAt = obj.getString("created_at");
-        tweet.user = STweetUser.parseJSON(obj.getJSONObject("user"));
+        tweet.favorited = obj.get("favorited").getAsBoolean();
+        tweet.truncated = obj.get("truncated").getAsBoolean();
+        tweet.inReplyToUserId = OptionalGson.getAsLong(obj, "in_reply_to_user_id");
+        tweet.inReplyToStatusId = OptionalGson.getAsLong(obj, "in_reply_to_status_id");
+        tweet.statusId = obj.get("id").getAsLong();
+        tweet.text = obj.get("text").getAsString();
+        tweet.inReplyToScreenName = OptionalGson.getAsString(obj, "in_reply_to_screen_name");
+        tweet.source = obj.get("source").getAsString();
+        tweet.createdAt = obj.get("created_at").getAsString();
+        tweet.user = STweetUser.parseJSON(obj.getAsJsonObject("user"));
 
         // get geo
-        JSONObject t = obj.optJSONObject("geo");
-        if (t != null && !t.isNullObject())
-            tweet.geo = STweetGeo.parseJSON(t);
-
+        JsonObject t = OptionalGson.getAsJsonObject(obj, "geo");
+        if (t != null) tweet.geo = STweetGeo.parseJSON(t);
+        
         return tweet;
     }
 
-    public JSONObject getJSON() {
+    public JsonObject getJSON() {
         return this.json;
     }
 
@@ -89,7 +88,7 @@ public final class STweet {
     	return new ToStringBuilder(null)
                 .append("statusId", statusId)
                 .append("tweet", text)
-                .append("user", user)
+                .append("user", user == null ? null : user.getName())
                 .toString();
     }
 

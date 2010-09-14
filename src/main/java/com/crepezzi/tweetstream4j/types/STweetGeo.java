@@ -27,8 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.crepezzi.tweetstream4j.types;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.crepezzi.tweetstream4j.ext.OptionalGson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 /**
  * Class representing a twitter geo location for the twitter streaming api
@@ -38,28 +39,29 @@ public final class STweetGeo {
 
     private String type;
     private Double latitude, longitude;
-    private JSONObject json;
+    private transient JsonObject json;
 
     /**
      * Parse a twitter geo location from JSON object
      * @param obj the JSON object to parse
      * @return The resultant STweetGeo object.
      */
-    static STweetGeo parseJSON(JSONObject obj) {
+    static STweetGeo parseJSON(JsonObject obj) {
         STweetGeo stg = new STweetGeo();
         stg.json = obj;
-        stg.type = obj.optString("type");
+        stg.type = OptionalGson.getAsString(obj, "type");
 
         //get coordinates
-        JSONArray coords = obj.optJSONArray("coordinates");
-        if (coords == null) return null; //we don't have a proper geo element
-        stg.latitude = coords.getDouble(0);
-        stg.longitude = coords.getDouble(1);
+        JsonArray coords = OptionalGson.getAsJsonArray(obj, "coordinates");
+        if (coords != null) {
+            stg.latitude = coords.get(0).getAsDouble();
+            stg.longitude = coords.get(1).getAsDouble();
+        }
 
         return stg;
     }
 
-    public JSONObject getJSON() {
+    public JsonObject getJSON() {
         return this.json;
     }
 

@@ -20,16 +20,19 @@
       <version>2.5</version>
       </dependency>
     <dependency>
-      <groupId>net.sf.ezmorph</groupId>
-      <artifactId>ezmorph</artifactId>
-      <version>1.0.6</version>
-      </dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>1.4</version>
+    </dependency>
     <dependency>
-      <groupId>net.sf.json-lib</groupId>
-      <artifactId>json-lib</artifactId>
-      <version>2.3</version>
-      <type>jar</type>
-      <classifier>jdk15</classifier>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>oauth.signpost</groupId>
+      <artifactId>signpost-commonshttp4</artifactId>
+      <version>1.2.1.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -44,8 +47,21 @@
 	  </plugin>
 	</plugins>
       </pluginManagement>
-    </build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
+
+
+
 
 
 
