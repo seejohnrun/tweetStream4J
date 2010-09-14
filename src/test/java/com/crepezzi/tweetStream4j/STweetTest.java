@@ -15,7 +15,7 @@ public class STweetTest {
 
     @Test
     public void testEquals() throws Exception {
-        assertFalse(obj.equals(null));
+        assertFalse(obj == null);
         assertFalse(obj.equals(new Object()));
         assertTrue(obj.equals(obj));
 
