@@ -78,6 +78,25 @@ public class APITest {
     }
 
     @Test
+    public void testFilterHappyPathWithSpace() throws Exception {
+        MyTwitterStreamHandler handler = new MyTwitterStreamHandler();
+
+        Collection<String> tracks = new ArrayList<String>();
+        tracks.add("what's new");
+        TwitterStream ts = TweetRiver.filter(tws, handler, null, tracks, null);
+
+        Thread t = (new Thread(ts));
+        t.start();
+
+        //stop after a certain number of seconds
+        waitSomeTime(5000);
+        ts.stop();
+
+        //make sure some tweets came in
+        assertTrue(handler.getTweetCount() > 0);
+    }
+
+    @Test
     public void testFilterByLocation() throws Exception {
         MyTwitterStreamHandler handler = new MyTwitterStreamHandler();
 

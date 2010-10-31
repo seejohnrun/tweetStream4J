@@ -142,6 +142,7 @@ public class TwitterStream implements Runnable {
                 if (line.isEmpty()) continue; //skip empty lines
                 parseIncoming(line);
             } catch (JsonParseException ex) {
+                System.out.println(line);
                 logger.error("API possibly broken, Twitter possibly broken! " + ex.getMessage());
             }
             if (this.stopRequested) break;

@@ -44,7 +44,6 @@ public class MyTwitterStreamHandler implements TwitterStreamHandler {
 
     @Override
     public void addTweet(STweet t) {
-        System.out.println("TWEET! " + t.toString());
         tweetCount++;
 
         if (t.getGeo() != null) coordCount++;
@@ -53,13 +52,11 @@ public class MyTwitterStreamHandler implements TwitterStreamHandler {
 
     @Override
     public void addLimit(SLimit l) {
-        System.out.println("LIMIT! " + l.toString());
         limitCount++;
     }
 
     @Override
     public void addDeletion(SDeletion d) {
-        System.out.println("DELETION! " + d.toString());
         deletionCount++;
     }
 

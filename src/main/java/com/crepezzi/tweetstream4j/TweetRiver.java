@@ -29,6 +29,7 @@ package com.crepezzi.tweetstream4j;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -37,7 +38,6 @@ import java.util.Map;
 import oauth.signpost.exception.OAuthException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -53,6 +53,8 @@ public class TweetRiver {
 
     private static final Log logger = LogFactory.getLog(TweetRiver.class);
     private static final String API_URL = "http://stream.twitter.com/1/";
+
+    private static final String ENCODING = "UTF-8";
 
     private static final String
             SAMPLE_URL = API_URL + "statuses/sample.json",
@@ -277,10 +279,16 @@ public class TweetRiver {
      * @throws IllegalArgumentException if any of the tracks contain
      *         spaces.  Reference: http://apiwiki.twitter.com/Streaming-API-Documentation#track
      */
-    private static String buildFilterContents(Collection<Long> follows, Collection<String> tracks, Collection<String> locations) {
+    private static String buildFilterContents(Collection<Long> follows, Collection<String> tracks, Collection<String> locations) throws UnsupportedEncodingException {
         List<String> pieces = new ArrayList<String>();
         if (follows != null && follows.size() > 0) pieces.add(list(follows, "follow=", ","));
-        if (tracks != null && tracks.size() > 0) pieces.add(list(tracks, "track=", ","));
+
+        if (tracks != null && tracks.size() > 0) {
+            Collection<String> encodedTracks = new ArrayList<String>(tracks.size());
+            for (String track : tracks) encodedTracks.add(URLEncoder.encode(track, ENCODING));
+            pieces.add(list(encodedTracks, "track=", ","));
+        }
+
         if (locations != null && locations.size() > 0) pieces.add(list(locations, "locations=", ","));
         return list(pieces, "", "&");
     }
