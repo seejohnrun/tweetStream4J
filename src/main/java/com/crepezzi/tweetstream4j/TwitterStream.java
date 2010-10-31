@@ -139,7 +139,6 @@ public class TwitterStream implements Runnable {
         String line;
         while((line = br.readLine()) != null) {
             try {
-                System.out.println(line);
                 if (line.isEmpty()) continue; //skip empty lines
                 parseIncoming(line);
             } catch (JsonParseException ex) {
